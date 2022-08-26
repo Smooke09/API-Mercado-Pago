@@ -1,5 +1,6 @@
 const axios = require("axios");
 const env = require("dotenv").config();
+const firebase = require("../config/connection");
 
 class MercadoPagoController {
   //Method para criar pagamento
@@ -37,7 +38,7 @@ class MercadoPagoController {
           );
           res.status(200).json({
             message: "Pagamento criado com sucesso",
-            "Numero Do Pagamento(id)": idGET,
+            NumeroDoPagamento: idGET,
             Descrição: getDescription,
             "Tipo de Pagamento": convertString,
           });
@@ -132,9 +133,46 @@ class MercadoPagoController {
       });
   }
 
+  async getInfoTransactionNgrok(req, res) {
+    const bodyResponse = await req.body;
+    res.status(200).json(bodyResponse);
+    //Salvando no banco de dados
+    const data = {
+      id: bodyResponse.id,
+      amount: bodyResponse.amount,
+      transictionCreate: bodyResponse.created_at,
+      payment: {
+        idDopagamento: bodyResponse.payment.id,
+        status: bodyResponse.payment.state,
+        type: bodyResponse.payment.type,
+      },
+      state: bodyResponse.state,
+    };
+
+    const payment = firebase.database().ref("pagamentos");
+    let key = payment.push().key;
+
+    payment
+      .child(data.id)
+      .set({
+        id: data.id,
+        ...data,
+      })
+      .then(() => {
+        res.status(200).json({
+          message: "Pagamento salvo com sucesso",
+          status: 200,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    return;
+  }
+
   //Method para pegar informaçoes do pagamento
   async getInfoTransaction(req, res) {
-    res.status(200).json(req.body);
+    console.log(req);
   }
 }
 

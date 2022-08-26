@@ -12,6 +12,8 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
 
+
+
 app.use(bodyParser.json());
 app.use(cors());
 app.use(express.json());

@@ -16,6 +16,7 @@
     "dotenv": "^16.0.1",
     "erede-node": "^1.0.11",
     "express": "^4.18.1",
+    "firebase": "^8.8.1",
     "nodemon": "^2.0.19",
     "socket.io": "^4.5.1"
   }

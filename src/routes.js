@@ -21,9 +21,17 @@ routes.delete(
 );
 
 //Postando  informaçoes do pagamento
-routes.post("/getInfoTransaction", MercadoPagoController.getInfoTransaction);
+routes.post(
+  "/getInfoTransaction",
+  MercadoPagoController.getInfoTransactionNgrok
+);
 
 // recebendo do webhook
-routes.get("/getInfoTransaction", MercadoPagoController.getInfoTransaction);
+routes.post(
+  "/transactionResponse",
+  MercadoPagoController.getInfoTransactionNgrok
+);
+
+routes.get("/transactionResponse", MercadoPagoController.getInfoTransaction);
 
 module.exports = routes;

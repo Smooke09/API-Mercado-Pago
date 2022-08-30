@@ -42,6 +42,7 @@ class MercadoPagoController {
             Descrição: getDescription,
             "Tipo de Pagamento": convertString,
           });
+
           return;
         }
       })
@@ -135,9 +136,26 @@ class MercadoPagoController {
 
   async getInfoTransactionNgrok(req, res) {
     const bodyResponse = await req.body;
+    console.log(bodyResponse);
+
+    const { io } = require("../config/http");
+
+    io.on("connection", (socket) => {
+      console.log("socket payment ID", socket.id);
+      socket.emit("payment", {
+        message: "Pagamento realizado com sucesso",
+        body: bodyResponse,
+      });
+
+      socket.on("disconnect", () => {
+        console.log("user disconnected");
+      });
+    });
+
     res.status(200).json(bodyResponse);
+
     //Salvando no banco de dados
-    const data = {
+    /*  const data = {
       id: bodyResponse.id,
       amount: bodyResponse.amount,
       transictionCreate: bodyResponse.created_at,
@@ -167,7 +185,7 @@ class MercadoPagoController {
       .catch((error) => {
         console.log(error);
       });
-    return;
+    return; */
   }
 
   //Method para pegar informaçoes do pagamento

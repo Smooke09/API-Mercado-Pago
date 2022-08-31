@@ -136,23 +136,19 @@ class MercadoPagoController {
 
   async getInfoTransactionNgrok(req, res) {
     const bodyResponse = await req.body;
-    console.log(bodyResponse);
-
-    const { io } = require("../config/http");
-
-    io.on("connection", (socket) => {
-      console.log("socket payment ID", socket.id);
-      socket.emit("payment", {
-        message: "Pagamento realizado com sucesso",
-        body: bodyResponse,
+    try {
+      const { io } = require("../config/http");
+      io.on("connection", (socket) => {
+        console.log("socket payment", socket.id);
       });
+      io.emit("payment", bodyResponse);
 
-      socket.on("disconnect", () => {
-        console.log("user disconnected");
-      });
-    });
+      console.log(bodyResponse);
 
-    res.status(200).json(bodyResponse);
+      res.status(200).json(bodyResponse);
+    } catch (error) {
+      res.status(500).json(error);
+    }
 
     //Salvando no banco de dados
     /*  const data = {

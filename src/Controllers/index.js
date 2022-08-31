@@ -199,22 +199,6 @@ class MercadoPagoController {
           console.log(error);
         });
 
-      /*    payment
-        .child(data.id)
-        .set({
-          id: data.id,
-          ...data,
-        })
-        .then(() => {
-          res.status(200).json({
-            message: "Pagamento salvo com sucesso",
-            status: 200,
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-        }); */
-
       res.status(200).json(bodyResponse);
     } catch (error) {
       res.status(500).json(error);

@@ -19,6 +19,12 @@ class MercadoPagoController {
         const getDescription = response.data.description;
         const paymentOfPagament = response.data.payment.type;
 
+        const data = {
+          id: idGET,
+          description: getDescription,
+          payment: paymentOfPagament,
+        };
+
         if (paymentOfPagament === "credit_card") {
           let convertString = paymentOfPagament.replace(
             "credit_card",
@@ -43,9 +49,8 @@ class MercadoPagoController {
             "Tipo de Pagamento": convertString,
           });
 
-          /* 
           //Salvando no banco de dados
-                  const payment = firebase.database().ref("pagamentos");
+          const payment = firebase.database().ref("paymentCreated");
           let key = payment.push().key;
 
           payment
@@ -63,9 +68,6 @@ class MercadoPagoController {
             .catch((error) => {
               console.log(error);
             });
-          return; 
-    */
-
           return;
         }
       })
@@ -167,7 +169,51 @@ class MercadoPagoController {
 
       io.emit("payment", bodyResponse[0]);
 
-      console.log(bodyResponse);
+      const data = bodyResponse[0];
+
+      const dataPayment = {
+        id: data.id,
+        amount: data.amount,
+        transictionCreate: data.created_at,
+        payment: {
+          id: data.payment.id,
+          status: data.payment.state,
+          type: data.payment.type,
+        },
+        state: data.state,
+      };
+
+      const payment = firebase.database().ref(`paymentCreated/${data.id}`);
+      let key = payment.push().key;
+
+      payment
+        .child(dataPayment.id)
+        .set({
+          id: dataPayment.id,
+          ...dataPayment,
+        })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      /*    payment
+        .child(data.id)
+        .set({
+          id: data.id,
+          ...data,
+        })
+        .then(() => {
+          res.status(200).json({
+            message: "Pagamento salvo com sucesso",
+            status: 200,
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        }); */
 
       res.status(200).json(bodyResponse);
     } catch (error) {
@@ -175,19 +221,6 @@ class MercadoPagoController {
     }
 
     //Salvando no banco de dados
-    /*  const data = {
-      id: bodyResponse.id,
-      amount: bodyResponse.amount,
-      transictionCreate: bodyResponse.created_at,
-      payment: {
-        idDopagamento: bodyResponse.payment.id,
-        status: bodyResponse.payment.state,
-        type: bodyResponse.payment.type,
-      },
-      state: bodyResponse.state,
-    };
-
-    */
   }
 
   //Method para pegar informaçoes do pagamento

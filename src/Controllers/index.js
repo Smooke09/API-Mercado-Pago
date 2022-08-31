@@ -43,6 +43,29 @@ class MercadoPagoController {
             "Tipo de Pagamento": convertString,
           });
 
+          /* 
+          //Salvando no banco de dados
+                  const payment = firebase.database().ref("pagamentos");
+          let key = payment.push().key;
+
+          payment
+            .child(data.id)
+            .set({
+              id: data.id,
+              ...data,
+            })
+            .then(() => {
+              res.status(200).json({
+                message: "Pagamento salvo com sucesso",
+                status: 200,
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+          return; 
+    */
+
           return;
         }
       })
@@ -135,13 +158,14 @@ class MercadoPagoController {
   }
 
   async getInfoTransactionNgrok(req, res) {
-    const bodyResponse = await req.body;
+    const bodyResponse = [await req.body];
     try {
       const { io } = require("../config/http");
       io.on("connection", (socket) => {
         console.log("socket payment", socket.id);
       });
-      io.emit("payment", bodyResponse);
+
+      io.emit("payment", bodyResponse[0]);
 
       console.log(bodyResponse);
 
@@ -163,25 +187,7 @@ class MercadoPagoController {
       state: bodyResponse.state,
     };
 
-    const payment = firebase.database().ref("pagamentos");
-    let key = payment.push().key;
-
-    payment
-      .child(data.id)
-      .set({
-        id: data.id,
-        ...data,
-      })
-      .then(() => {
-        res.status(200).json({
-          message: "Pagamento salvo com sucesso",
-          status: 200,
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    return; */
+    */
   }
 
   //Method para pegar informaçoes do pagamento
